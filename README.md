@@ -1,4 +1,4 @@
-# Fullstack Book Management System
+# Laravel 10 + Vue 3 + Inertia.js Book Management System
 
 ## Requirements
 
@@ -41,21 +41,24 @@
     ```
 9. Set the storage permissions:
     ```
-    chmod -R 775 storage/logs
-    chown -R www-data:www-data storage/logs
-
-    chmod -R 775 storage/framework/sessions
-    chown -R www-data:www-data storage/framework/sessions
-
-    chmod -R 775 storage/framework/views
-    chown -R www-data:www-data storage/framework/views
+    chmod -R 775 storage/
+    chown -R www-data:www-data storage/
     ```
 10. Clear Laravel config and cache:
     ```
     php artisan config:clear
     php artisan cache:clear
     ```
-14. Run the database migrations:
+11. Run the database migrations:
     ```
     php artisan migrate
+    ```
+12. Exit the container:
+    ```
+    exit
+    ```
+13. Set up Vue frontend:
+    ```
+    npm install
+    npm run dev
     ```
