@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthorUpsertRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -27,18 +28,32 @@ class AuthorController extends Controller
     }
 
     public function show($id) {
-
+        $author = $this->authorService->getById($id);
+        return response()->json($author);
     }
 
-    public function store() {
-
+    public function store(AuthorUpsertRequest $request) {
+        $data = [
+            'name' => $request['name'],
+            'birth_date' => $request['birth_date'],
+        ];
+        
+        $author = $this->authorService->create($data);
+        return response()->json($author);
     }
 
-    public function update() {
+    public function update(AuthorUpsertRequest $request, $id) {
+        $data = [
+            'name' => $request['name'],
+            'birth_date' => $request['birth_date'],
+        ];
 
+        $author = $this->authorService->update($data, $id);
+        return response()->json($author);
     }
 
     public function delete($id) {
-
+        $author = $this->authorService->delete($id);
+        return response()->json(null);
     }
 }

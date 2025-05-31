@@ -62,3 +62,27 @@
     npm install
     npm run dev
     ```
+
+## Tests Instructions
+
+1. Access the application container:
+    ```
+    docker-compose exec web bash
+    ```
+
+2. Run the commands
+    ```
+    php artisan config:clear --env=testing
+    php artisan migrate --env=testing
+    ```
+
+3. Exit the container:
+    ```
+    exit
+    ```
+
+4. Run the tests
+    ```
+    docker-compose run --rm web vendor/bin/phpunit
+    ```
+
