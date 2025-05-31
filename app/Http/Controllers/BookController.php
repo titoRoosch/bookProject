@@ -23,7 +23,7 @@ class BookController extends Controller
 
     public function index() {
         $book = $this->bookService->getAll();
-        return response()->json([$book]);
+        return response()->json($book);
     }
 
     public function show($id) {

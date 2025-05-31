@@ -1,17 +1,11 @@
 import './bootstrap';
-import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createApp, h } from 'vue'
+import { createPinia } from 'pinia'
+import { router } from './router'
+import App from './components/App.vue'
 
-import App from './components/App.vue';
-import HomePage from './components/Home.vue';
+const app = createApp(App)
+app.use(createPinia())
+app.use(router)
+app.mount('#app')
 
-const routes = [
-    { path: '/', component: HomePage },
-];
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes,
-});
-
-createApp(App).use(router).mount('#app');

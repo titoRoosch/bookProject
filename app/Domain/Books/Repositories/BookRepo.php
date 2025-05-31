@@ -11,8 +11,11 @@ class BookRepo implements BookRepoInterface
 
     public function getAll(){
 
-        return Books::all();
+        // return Books::all();
         
+        $query = Books::with('authors');
+
+        return $query->paginate(10);
     }
 
     public function getById($id){
