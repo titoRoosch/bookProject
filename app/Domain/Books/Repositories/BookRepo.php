@@ -19,7 +19,7 @@ class BookRepo implements BookRepoInterface
     }
 
     public function getById($id){
-        return Books::findOrFail($id);
+        return Books::with('authors')->findOrFail($id);
     }
 
     public function create(array $data){

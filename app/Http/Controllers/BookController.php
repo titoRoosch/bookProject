@@ -36,7 +36,7 @@ class BookController extends Controller
         $data = [
             'title' => $request['title'],
             'publish_date' => $request['publish_date'],
-            'authors' => $request['authors'],
+            'authors' => $request['authors_ids'],
         ];
         
         $book = $this->bookService->create($data);

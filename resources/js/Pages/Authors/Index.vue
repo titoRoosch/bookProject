@@ -4,6 +4,7 @@
 
     <AuthorList />
     <Pagination
+      v-if="pagination && pagination.total"
       :current-page="pagination.current_page"
       :total-pages="Math.ceil(pagination.total / pagination.per_page)"
       @change="handlePageChange"

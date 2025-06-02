@@ -17,7 +17,7 @@ export const useBookStore = defineStore('books', {
       })
 
       this.books = response.data.data
-      this.pagination = response.data.meta
+      this.pagination = response.data
     }
   }
 })

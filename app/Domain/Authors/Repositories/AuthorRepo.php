@@ -13,7 +13,7 @@ class AuthorRepo implements AuthorRepoInterface
     }
 
     public function getById($id){
-        return Authors::find($id);
+        return Authors::with('books')->find($id);
     }
 
     public function create(array $data){
