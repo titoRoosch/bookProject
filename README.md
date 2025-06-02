@@ -121,6 +121,10 @@ This application allows users to create, view, update, and delete books and auth
     npm run dev
     ```
 
+14. Access Localhost:8000
+
+15. Register and navigate at will
+
 ---
 
 ## Running Tests
