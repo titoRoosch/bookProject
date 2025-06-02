@@ -15,7 +15,6 @@ export const useBookStore = defineStore('books', {
       const response = await axios.get('/api/book/index', { params: { ...this.filters, ...params } })
       this.books = response.data.data
       this.pagination = response.data
-      console.log(response.data);
     }
   }
 })

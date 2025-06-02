@@ -22,6 +22,9 @@ Route::get('/message', function () {
     return response()->json(['message' => 'Hello from Laravel!']);
 });
 
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+
+
 Route::prefix('author')->namespace('App\Http\Controllers')->group(function () {
     Route::get('index', 'AuthorController@index');
     Route::get('show/{id}', 'AuthorController@show');
