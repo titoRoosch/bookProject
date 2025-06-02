@@ -4,6 +4,7 @@ namespace App\Domain\Authors\Repositories;
 
 use App\Models\Authors;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class AuthorRepo implements AuthorRepoInterface
 {
@@ -16,16 +17,18 @@ class AuthorRepo implements AuthorRepoInterface
         return Authors::with('books')->find($id);
     }
 
-    public function getMostPublished(){
-        return Authors::select('name')
-            ->withCount('books')
-            ->orderByDesc('books_count')
-            ->limit(10)
-            ->get()
-            ->map(fn ($author) => [
-                'name' => $author->name,
-                'books_count' => $author->books_count,
-            ]);
+    public function getMostPublished($limit = 5){
+        return Cache::remember("top_authors_{$limit}", 300, function () use ($limit) {
+            return Authors::select('name')
+                    ->withCount('books')
+                    ->orderByDesc('books_count')
+                    ->take($limit)
+                    ->get()
+                    ->map(fn ($a) => [
+                        'name' => $a->name,
+                        'books_count' => $a->books_count,
+                    ]);
+        });
     }
 
     public function create(array $data){

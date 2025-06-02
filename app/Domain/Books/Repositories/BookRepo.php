@@ -6,6 +6,7 @@ use App\Models\Books;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cache;
 
 class BookRepo implements BookRepoInterface
 {
@@ -22,12 +23,15 @@ class BookRepo implements BookRepoInterface
         return Books::with('authors')->findOrFail($id);
     }
 
-    public function getBooksByYear(){
-        return DB::table('books')
-            ->selectRaw('EXTRACT(YEAR FROM publish_date) as year, COUNT(*) as total')
-            ->groupBy('year')
-            ->orderBy('year')
-            ->get();
+    public function getBooksByYear($from, $to){
+        return Cache::remember("books_by_year_{$from}_{$to}", 300, function () use ($from, $to) {
+            return DB::table('books')
+                ->selectRaw('EXTRACT(YEAR FROM publish_date) as year, COUNT(*) as total')
+                ->whereBetween(DB::raw('EXTRACT(YEAR FROM publish_date)'), [$from, $to])
+                ->groupBy('year')
+                ->orderBy('year')
+                ->get();
+        });
     }
 
     public function create(array $data){

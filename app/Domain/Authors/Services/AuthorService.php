@@ -24,9 +24,9 @@ class AuthorService
         return $this->authorRepo->getById($id);
     }
 
-    public function getMostPublished()
+    public function getMostPublished($limit)
     {
-        return $this->authorRepo->getMostPublished();
+        return $this->authorRepo->getMostPublished($limit);
     }
 
     public function create(array $data)
