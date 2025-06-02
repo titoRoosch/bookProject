@@ -17,6 +17,9 @@
 </template>
 
 <script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+defineOptions({ layout: AuthenticatedLayout })
+
 import { onMounted } from 'vue'
 import Chart from 'chart.js/auto'
 

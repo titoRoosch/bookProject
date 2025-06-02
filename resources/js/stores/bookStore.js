@@ -12,9 +12,12 @@ export const useBookStore = defineStore('books', {
   }),
   actions: {
     async fetchBooks(params = {}) {
-      const response = await axios.get('/api/book/index', { params: { ...this.filters, ...params } })
+      const response = await axios.get('/api/book/index', {
+        params: { ...this.filters, ...params }
+      })
+
       this.books = response.data.data
-      this.pagination = response.data
+      this.pagination = response.data.meta
     }
   }
 })

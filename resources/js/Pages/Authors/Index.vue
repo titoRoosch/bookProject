@@ -1,7 +1,7 @@
 <template>
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-4">List of Authors</h1>
-    <BookFilters />
+
     <AuthorList />
     <Pagination
       :current-page="pagination.current_page"
@@ -13,17 +13,17 @@
 </template>
 
 <script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+defineOptions({ layout: AuthenticatedLayout })
+
 import { onMounted } from 'vue'
-import { useAuthorStore } from '../stores/authorStore'
+import { useAuthorStore } from '@/stores/authorStore'
 import { storeToRefs } from 'pinia'
-import BookFilters from '../components/BookFilters.vue'
-import AuthorList from '../components/AuthorList.vue'
-import Pagination from '../components/Pagination.vue'
+import AuthorList from '@/Components/AuthorList.vue'
+import Pagination from '@/Components/Pagination.vue'
 
 const store = useAuthorStore()
 const { authors, pagination } = storeToRefs(store)
-
-console.log(pagination);
 
 const handlePageChange = (page) => {
   store.fetchAuthors({ page }) // Envia o número da página como query param

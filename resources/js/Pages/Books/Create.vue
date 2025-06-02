@@ -24,10 +24,13 @@
 </template>
 
 <script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+defineOptions({ layout: AuthenticatedLayout })
+
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import AuthorDropdown from '../components/AuthorDropdown.vue'
+import AuthorDropdown from '@/Components/AuthorDropdown.vue'
 
 const router = useRouter()
 const form = reactive({
