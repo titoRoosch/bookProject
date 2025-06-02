@@ -1,105 +1,85 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Authors;
 use App\Models\Books;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class BookTest extends TestCase
-{
+uses(RefreshDatabase::class);
 
-    use RefreshDatabase;
+function mocksBooks() {
+    $author = Authors::factory()->create();
+    $books = Books::factory(3)->create();
 
-    public function testGetBook(): void
-    {
-        $mock = $this->mocks();
-        
-        $response = $this->makeRequest('get', '/api/book/index');
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals(3, count($responseData['data']));
+    foreach ($books as $book) {
+        $book->authors()->attach($author->id);
     }
 
-    public function testGetBookById(): void
-    {
-        $mock = $this->mocks();
-        
-        $response = $this->makeRequest('get', '/api/book/show/' . $mock['books'][0]->id);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals($mock['books'][0]->id, $responseData['id']);
-    }
-
-    public function testCreateBook(): void
-    {
-        $mock = $this->mocks();
-        $data =   [
-            'title' => 'teste',
-            'publish_date' => '1995-04-08',
-            'authors' => [
-                ["author_id" => $mock['author']->id]
-            ]
-        ];
-        
-        $response = $this->makeRequest('post', '/api/book/store', $data);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-        $response->assertStatus(200);
-        $this->assertEquals('teste', $responseData['title']);
-    }
-
-    public function testUpdateBook(): void
-    {
-        $mock = $this->mocks();
-        $data = [
-            'title' => $mock['books'][0]->title,
-            'publish_date' => '1995-07-04',
-            'authors' => [
-                ["author_id" => $mock['author']->id]
-            ]
-        ];
-
-        $response = $this->makeRequest('put', '/api/book/update/' . $mock['books'][0]->id, $data);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals($responseData['id'], $mock['books'][0]->id);
-        $this->assertEquals($responseData['publish_date'], '1995-07-04');
-    }
-
-    public function testDeleteBook(): void
-    {
-        $mock = $this->mocks();
-
-        $response = $this->makeRequest('delete', '/api/book/delete/' . $mock['books'][0]->id);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-    }
-
-    protected function mocks() 
-    {
-        $author = Authors::factory()->create();
-        $books = Books::factory(3)->create();
-
-        foreach($books as $book) {
-            $book->authors()->attach($author->id);   
-        }
-
-        $mock = [
-            'author' => $author,
-            'books' => $books,
-        ];
-
-        return $mock;
-    }
+    return [
+        'author' => $author,
+        'books' => $books,
+    ];
 }
+
+test('it gets all books', function () {
+    $mock = mocksBooks();
+
+    $response = $this->json('get', '/api/book/index');
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect(count($responseData['data']))->toBe(3);
+});
+
+test('it gets book by id', function () {
+    $mock = mocksBooks();
+
+    $response = $this->json('get', '/api/book/show/' . $mock['books'][0]->id);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['id'])->toBe($mock['books'][0]->id);
+});
+
+test('it creates a book', function () {
+    $mock = mocksBooks();
+
+    $data = [
+        'title' => 'teste',
+        'publish_date' => '1995-04-08',
+        'authors' => [
+            ['author_id' => $mock['author']->id]
+        ],
+    ];
+
+    $response = $this->json('post', '/api/book/store', $data);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['title'])->toBe('teste');
+});
+
+test('it updates a book', function () {
+    $mock = mocksBooks();
+
+    $data = [
+        'title' => $mock['books'][0]->title,
+        'publish_date' => '1995-07-04',
+        'authors' => [
+            ['author_id' => $mock['author']->id]
+        ],
+    ];
+
+    $response = $this->json('put', '/api/book/update/' . $mock['books'][0]->id, $data);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['id'])->toBe($mock['books'][0]->id);
+    expect($responseData['publish_date'])->toBe('1995-07-04');
+});
+
+test('it deletes a book', function () {
+    $mock = mocksBooks();
+
+    $response = $this->json('delete', '/api/book/delete/' . $mock['books'][0]->id);
+    $response->assertStatus(200);
+});

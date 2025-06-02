@@ -1,97 +1,72 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Authors;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class AuthorTest extends TestCase
+uses(RefreshDatabase::class);
+
+function mocks()
 {
-
-    use RefreshDatabase;
-
-    public function testGetAuthor(): void
-    {
-        $mock = $this->mocks();
-        
-        $response = $this->makeRequest('get', '/api/author/index');
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals(3, count($responseData));
-    }
-
-    public function testGetAuthorById(): void
-    {
-        $mock = $this->mocks();
-        
-        
-        $response = $this->makeRequest('get', '/api/author/show/' . $mock['author'][0]->id);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals($mock['author'][0]->id, $responseData['id']);
-    }
-
-    public function testCreateAuthor(): void
-    {
-        $mock = $this->mocks();
-        
-        $data =  [
-            'name' => 'teste',
-            'birth_date' => '1995-07-04'
-        ];
-        
-        $response = $this->makeRequest('post', '/api/author/store', $data);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-        $response->assertStatus(200);
-        $this->assertEquals('teste', $responseData['name']);
-    }
-
-
-    public function testUpdateAuthor(): void
-    {
-        $mock = $this->mocks();
-        
-        $data = [
-            'name' => $mock['author'][0]->name,
-            'birth_date' => '1995-07-04'
-        ];
-
-        $response = $this->makeRequest('put', '/api/author/update/' . $mock['author'][0]->id, $data);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-        $this->assertEquals($responseData['id'], $mock['author'][0]->id);
-        $this->assertEquals($responseData['birth_date'], '1995-07-04');
-    }
-
-    public function testDeleteAuthor(): void
-    {
-        $mock = $this->mocks();
-        
-
-        $response = $this->makeRequest('delete', '/api/author/delete/' . $mock['author'][0]->id);
-        $content = $response->getContent();
-        $responseData = json_decode($content, true);
-
-        $response->assertStatus(200);
-    }
-
-    protected function mocks() 
-    {
-        $author = Authors::factory(3)->create();
-
-        $mock = [
-            'author' => $author,
-        ];
-
-        return $mock;
-    }
+    $author = Authors::factory(3)->create();
+    return [
+        'author' => $author,
+    ];
 }
+
+it('gets all authors', function () {
+    $mock = mocks();
+
+    $response = $this->json('get', '/api/author/index');
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect(count($responseData))->toBe(3);
+});
+
+it('gets author by id', function () {
+    $mock = mocks();
+
+    $response = $this->json('get', '/api/author/show/' . $mock['author'][0]->id);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['id'])->toBe($mock['author'][0]->id);
+});
+
+it('creates an author', function () {
+    mocks();
+
+    $data = [
+        'name' => 'teste',
+        'birth_date' => '1995-07-04',
+    ];
+
+    $response = $this->json('post', '/api/author/store', $data);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['name'])->toBe('teste');
+});
+
+it('updates an author', function () {
+    $mock = mocks();
+
+    $data = [
+        'name' => $mock['author'][0]->name,
+        'birth_date' => '1995-07-04',
+    ];
+
+    $response = $this->json('put', '/api/author/update/' . $mock['author'][0]->id, $data);
+    $response->assertStatus(200);
+
+    $responseData = $response->json();
+    expect($responseData['id'])->toBe($mock['author'][0]->id);
+    expect($responseData['birth_date'])->toBe('1995-07-04');
+});
+
+it('deletes an author', function () {
+    $mock = mocks();
+
+    $response = $this->json('delete', '/api/author/delete/' . $mock['author'][0]->id);
+    $response->assertStatus(200);
+});

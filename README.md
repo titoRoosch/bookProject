@@ -60,7 +60,7 @@
 13. Set up Vue frontend:
     ```
     npm install
-    npm run dev
+    npm run build
     ```
 
 ## Tests Instructions
@@ -73,7 +73,7 @@
 2. Run the commands
     ```
     php artisan config:clear --env=testing
-    php artisan migrate --env=testing
+    php artisan migrate:fresh --seed --env=testing
     ```
 
 3. Exit the container:
@@ -81,8 +81,14 @@
     exit
     ```
 
-4. Run the tests
+4. Run the PHP tests
     ```
-    docker-compose run --rm web vendor/bin/phpunit
+    docker-compose run --rm web vendor/bin/pest
     ```
+
+5. Run the Vue tests
+    ```
+    npx vitest
+    ```
+
 
