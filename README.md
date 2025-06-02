@@ -1,118 +1,86 @@
-Skip to content
-Navigation Menu
-titoRoosch
-bookProject
+# Book Management System
 
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-bookProject
-/
-README.md
-in
-main
+A full-stack system for managing books and authors built with Laravel 10, Vue 3, Inertia.js, Pinia, and Docker.
 
-Edit
+## About the Project
 
-Preview
-Indent mode
+This application allows users to create, view, update, and delete books and authors. It features:
 
-Spaces
-Indent size
+- Filterable and sortable book listing
+- Many-to-many relationships between books and authors
+- Real-time dashboard with metrics and charts
+- Full test coverage with Pest and Vitest
 
-4
-Line wrap mode
+## Tech Stack
 
-Soft wrap
-Editing README.md file contents
-Selection deleted
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163
+- **Backend:** Laravel 10, PHP 8, Pest (testing)
+- **Frontend:** Vue 3, Inertia.js, Pinia, Tailwind CSS, Vite
+- **Database:** PostgreSQL
+- **Testing:** Pest (PHP), Vitest (Vue)
+- **Containerization:** Docker, Docker Compose
+
+## Features 
+
+- CRUD operations for Books and Authors
+
+- Pagination, filtering, and sorting for listings
+
+- Many-to-many relationships (books ↔ authors)
+
+- Dashboard with real-time metrics and charts
+
+- Dockerized environment for easy setup and deployment
+
+- Automated tests covering backend and frontend
+
+## Requirements
+
+- Docker
+- Docker Compose
+- npm
+- nvm (optional, for Node.js version control)
+
+---
+
+## Setup Instructions
+
+1. Clone this repository.
+
+2. Copy the environment file:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+3. Build the Docker containers:
+
+    ```bash
+    docker-compose build
+    ```
+
+4. Create a Docker network (if not already created):
+
+    ```bash
+    docker network create library_laravel_app_network
+    ```
+
+5. Start the Docker containers:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+6. Access the application container:
+
+    ```bash
+    docker-compose exec web bash
+    ```
+
+7. Install PHP dependencies with Composer:
+
+    ```bash
+    composer install
+    ```
 
 8. Generate the Laravel application key:
 
@@ -185,6 +153,7 @@ Selection deleted
     ```
 
 ---
+
  ### Frontend (Vue - Vitest)
 
 1. Run frontend tests with:
