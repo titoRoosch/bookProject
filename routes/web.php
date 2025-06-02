@@ -4,8 +4,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Authors;
-use App\Models\Books;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,25 +38,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/books', fn () => Inertia::render('Books/Index'))->name('books.index');
     Route::get('/books/create', fn () => Inertia::render('Books/Form'))->name('books.create');
-    Route::get('/books/{book}/edit', function (Books $book) {
-        $book->load('authors');
-        return Inertia::render('Books/Form', compact('book'));
-    })->name('books.edit');
-
-    Route::get('/books/{book}', function (Books $book) {
-        $book->load('authors');
-        return Inertia::render('Books/Show', compact('book'));
-    })->name('books.show');
+    Route::get('/books/{book}/edit', fn () => Inertia::render('Books/Form'))->name('books.edit');
+    Route::get('/books/{book}', fn () => Inertia::render('Books/Show'))->name('books.show');
 
     Route::get('/authors', fn () => Inertia::render('Authors/Index'))->name('authors.index');
     Route::get('/authors/create', fn () => Inertia::render('Authors/Form'))->name('authors.create');
-    Route::get('/authors/{author}/edit', function (Authors $author) {
-        return Inertia::render('Authors/Form', compact('author'));
-    })->name('authors.edit');
-
-    Route::get('/authors/{author}', function (Authors $author) {
-        return Inertia::render('Authors/Show', compact('author'));
-    })->name('authors.show');
+    Route::get('/authors/{author}/edit', fn () => Inertia::render('Authors/Form'))->name('authors.edit');
+    Route::get('/authors/{author}', fn () => Inertia::render('Authors/Show'))->name('authors.show');
 
     Route::get('/dashboardBooks', fn () => Inertia::render('Dashboard/Index'))->name('dashboard');
 });

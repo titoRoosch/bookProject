@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xl mx-auto space-y-6">
     <h1 class="text-2xl font-bold">
-      {{ author?.id ? 'Editar Autor' : 'Criar Autor' }}
+      {{ isEdit ? 'Editar Autor' : 'Criar Autor' }}
     </h1>
 
     <form @submit.prevent="submit">
@@ -37,23 +37,37 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
-import { usePage, router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import AuthorDropdown from '@/Components/AuthorDropdown.vue'
 
 defineOptions({ layout: AuthenticatedLayout })
 
-const page = usePage()
-const author = page.props.author ?? null
+// Detecta se é edição, capturando o ID da URL
+const pathSegments = window.location.pathname.split('/')
+const authorId = pathSegments.includes('edit') ? pathSegments[pathSegments.length - 2] : null
+const isEdit = !!authorId
 
 const form = reactive({
-  name: author?.name || '',
-  birth_date: author?.birth_date || '',
+  name: '',
+  birth_date: ''
 })
 
 const errors = ref({})
+
+// Se for edição, busca dados do autor via API
+onMounted(async () => {
+  if (isEdit) {
+    try {
+      const { data } = await axios.get(`/api/author/show/${authorId}`)
+      form.name = data.name
+      form.birth_date = data.birth_date
+    } catch (err) {
+      console.error('Erro ao buscar autor:', err)
+    }
+  }
+})
 
 async function submit() {
   try {
@@ -61,11 +75,11 @@ async function submit() {
 
     const payload = {
       name: form.name,
-      birth_date: form.birth_date,
+      birth_date: form.birth_date
     }
 
-    if (author?.id) {
-      await axios.put(`/api/author/update/${author.id}`, payload)
+    if (isEdit) {
+      await axios.put(`/api/author/update/${authorId}`, payload)
     } else {
       await axios.post('/api/author/store', payload)
     }
@@ -75,7 +89,7 @@ async function submit() {
     if (err.response && err.response.status === 422) {
       errors.value = err.response.data.errors
     } else {
-      console.error('Unexpected error:', err)
+      console.error('Erro inesperado:', err)
     }
   }
 }

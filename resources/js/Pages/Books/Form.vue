@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xl mx-auto space-y-6">
     <h1 class="text-2xl font-bold">
-      {{ book?.id ? 'Edit Book' : 'Create Book' }}
+      {{ isEdit ? 'Edit Book' : 'Create Book' }}
     </h1>
 
     <form @submit.prevent="submit">
@@ -39,24 +39,41 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
-import { usePage, router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import AuthorDropdown from '@/Components/AuthorDropdown.vue'
 
 defineOptions({ layout: AuthenticatedLayout })
 
-const page = usePage()
-const book = page.props.book ?? null
+// Extract book ID from URL manually (e.g. /books/5/edit)
+const pathSegments = window.location.pathname.split('/')
+const bookId = pathSegments.includes('edit') ? pathSegments[pathSegments.length - 2] : null
+
+const isEdit = !!bookId
 
 const form = reactive({
-  title: book?.title || '',
-  publish_date: book?.publish_date || '',
-  author_ids: book?.authors?.map(a => a.id) || []
+  title: '',
+  publish_date: '',
+  author_ids: []
 })
 
 const errors = ref({})
+
+// Fetch existing book if editing
+onMounted(async () => {
+  if (bookId) {
+    try {
+      const { data } = await axios.get(`/api/book/show/${bookId}`)
+      form.title = data.title
+      form.publish_date = data.publish_date
+      form.author_ids = data.authors.map(a => a.id)
+    } catch (err) {
+      console.error('Failed to fetch book:', err)
+    }
+  }
+})
 
 async function submit() {
   try {
@@ -65,11 +82,11 @@ async function submit() {
     const payload = {
       title: form.title,
       publish_date: form.publish_date,
-      authors: form.author_ids.map(id => ({ author_id: id })), // ✅ transform here
+      authors: form.author_ids.map(id => ({ author_id: id }))
     }
 
-    if (book?.id) {
-      await axios.put(`/api/book/update/${book.id}`, payload)
+    if (isEdit) {
+      await axios.put(`/api/book/update/${bookId}`, payload)
     } else {
       await axios.post('/api/book/store', payload)
     }
