@@ -9,11 +9,23 @@ class AuthorRepo implements AuthorRepoInterface
 {
 
     public function getAll(){
-        return Authors::all();
+        return Authors::orderBy("name")->get();
     }
 
     public function getById($id){
         return Authors::with('books')->find($id);
+    }
+
+    public function getMostPublished(){
+        return Authors::select('name')
+            ->withCount('books')
+            ->orderByDesc('books_count')
+            ->limit(10)
+            ->get()
+            ->map(fn ($author) => [
+                'name' => $author->name,
+                'books_count' => $author->books_count,
+            ]);
     }
 
     public function create(array $data){

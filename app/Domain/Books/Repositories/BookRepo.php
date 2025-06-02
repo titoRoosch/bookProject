@@ -13,13 +13,21 @@ class BookRepo implements BookRepoInterface
 
     public function getAll(){
         
-        $query = Books::with('authors');
+        $query = Books::with('authors')->orderBy("title");
 
         return $query->paginate(10);
     }
 
     public function getById($id){
         return Books::with('authors')->findOrFail($id);
+    }
+
+    public function getBooksByYear(){
+        return DB::table('books')
+            ->selectRaw('EXTRACT(YEAR FROM publish_date) as year, COUNT(*) as total')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
     }
 
     public function create(array $data){

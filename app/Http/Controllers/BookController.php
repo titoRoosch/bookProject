@@ -12,11 +12,6 @@ class BookController extends Controller
 {
     protected $bookService;
 
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct(BookService $bookService)
     {
         $this->bookService = $bookService;

@@ -24,6 +24,11 @@ class BookService
         return $this->bookRepo->getById($id);
     }
 
+    public function getBooksByYear()
+    {
+        return $this->bookRepo->getBooksByYear();
+    }
+
     public function create(array $data)
     {
         $rules = [

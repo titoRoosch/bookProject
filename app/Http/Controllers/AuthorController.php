@@ -12,11 +12,6 @@ class AuthorController extends Controller
 {
     protected $authorService;
 
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct(AuthorService $authorService)
     {
         $this->authorService = $authorService;
