@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookIndexRequest;
 use App\Http\Requests\BookUpsertRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,16 @@ class BookController extends Controller
         $this->bookService = $bookService;
     }
 
-    public function index() {
-        $book = $this->bookService->getAll();
+    public function index(BookIndexRequest $request)
+    {
+        $validated = $request->validated();
+
+        $book = $this->bookService->getAll(
+            $validated['search'] ?? null,
+            $validated['orderBy'] ?? 'title',
+            $validated['direction'] ?? 'asc'
+        );
+
         return response()->json($book);
     }
 
@@ -31,7 +40,7 @@ class BookController extends Controller
         $data = [
             'title' => $request['title'],
             'publish_date' => $request['publish_date'],
-            'authors' => $request['authors_ids'],
+            'authors' => $request['authors'],
         ];
         
         $book = $this->bookService->create($data);

@@ -1,10 +1,6 @@
 <template>
   <div class="filters mb-4">
     <input v-model="search" @input="onFilterChange" placeholder="Search" class="border px-2 py-1" />
-    <select v-model="author_id" @change="onFilterChange" class="border px-2 py-1 ml-2">
-      <option value="">All Authors</option>
-      <option v-for="author in authors" :key="author.id" :value="author.id">{{ author.name }}</option>
-    </select>
   </div>
 </template>
 

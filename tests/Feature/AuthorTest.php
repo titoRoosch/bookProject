@@ -20,7 +20,7 @@ it('gets all authors', function () {
     $response->assertStatus(200);
 
     $responseData = $response->json();
-    expect(count($responseData))->toBe(3);
+    expect(count($responseData['data']))->toBe(3);
 });
 
 it('gets author by id', function () {

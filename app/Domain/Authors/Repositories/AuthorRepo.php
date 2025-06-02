@@ -9,8 +9,16 @@ use Illuminate\Support\Facades\Cache;
 class AuthorRepo implements AuthorRepoInterface
 {
 
-    public function getAll(){
-        return Authors::orderBy("name")->get();
+    public function getAll(?string $name = null, ?string $orderBy = 'name', ?string $direction = 'asc'){
+        $query = Authors::query();
+
+        if (!empty($name)) {
+            $query->where('name', 'ilike',$name."%");
+        }
+
+        $query->orderBy($orderBy, $direction);
+
+        return $query->paginate(10);
     }
 
     public function getById($id){

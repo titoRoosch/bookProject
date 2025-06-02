@@ -15,8 +15,8 @@ class AuthorService
         $this->authorRepo = $authorRepo;
     }
 
-    public function getAll(){
-        return $this->authorRepo->getAll();
+    public function getAll(?string $name = null, ?string $orderBy = 'name', ?string $direction = 'asc'){
+        return $this->authorRepo->getAll($name, $orderBy, $direction);
     }
 
     public function getById($id)

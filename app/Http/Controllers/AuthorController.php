@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthorIndexRequest;
 use App\Http\Requests\AuthorUpsertRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,16 @@ class AuthorController extends Controller
         $this->authorService = $authorService;
     }
 
-    public function index() {
-        $author = $this->authorService->getAll();
+    public function index(AuthorIndexRequest $request) {
+
+        $validated = $request->validated();
+
+        $author = $this->authorService->getAll(
+            $validated['search'] ?? null,
+            $validated['orderBy'] ?? 'name',
+            $validated['direction'] ?? 'asc'
+        );
+
         return response()->json($author);
     }
 

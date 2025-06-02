@@ -12,9 +12,15 @@ class BookRepo implements BookRepoInterface
 {
     protected $bookRepo;
 
-    public function getAll(){
-        
-        $query = Books::with('authors')->orderBy("title");
+    public function getAll(?string $title = null, ?string $orderBy = 'title', ?string $direction = 'asc')
+    {
+        $query = Books::with('authors');
+
+        if (!empty($title)) {
+            $query->where('title', 'ilike',$title."%");
+        }
+
+        $query->orderBy($orderBy, $direction);
 
         return $query->paginate(10);
     }

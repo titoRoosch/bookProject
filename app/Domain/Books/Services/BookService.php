@@ -15,8 +15,8 @@ class BookService
         $this->bookRepo = new BookRepo();
     }
 
-    public function getAll(){
-        return $this->bookRepo->getAll();
+    public function getAll(?string $title = null, ?string $orderBy = 'title', ?string $direction = 'asc'){
+        return $this->bookRepo->getAll($title, $orderBy, $direction);
     }
 
     public function getById($id)

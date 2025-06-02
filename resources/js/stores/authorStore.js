@@ -12,8 +12,11 @@ export const useAuthorStore = defineStore('authors', {
   }),
   actions: {
     async fetchAuthors(params = {}) {
-      const response = await axios.get('/api/author/index', { params: { ...this.filters, ...params } })
-      this.authors = response.data
+      const response = await axios.get('/api/author/index', { 
+        params: { ...this.filters, ...params } 
+      })
+      
+      this.authors = response.data.data
       this.pagination = response.data
     }
   }
