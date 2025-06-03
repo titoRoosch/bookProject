@@ -14,12 +14,24 @@ class DashboardController extends Controller
     protected $bookService;
     protected $authorService;
 
+    /**
+     * Injects BookService and AuthorService into the controller
+     *
+     * @param BookService $bookService - service responsible for book business logic
+     * @param AuthorService $authorService - service responsible for author business logic
+     */
     public function __construct(BookService $bookService, AuthorService $authorService)
     {
         $this->bookService = $bookService;
         $this->authorService = $authorService;
     }
 
+    /**
+     * Returns dashboard data with books statistics by year and top authors
+     *
+     * @param DashboardFilterRequest $request - validated request containing optional filters (from_year, to_year, top_authors)
+     * @return JsonResponse - JSON response with aggregated dashboard data
+     */
     public function index(DashboardFilterRequest $request): JsonResponse
     {
         try{

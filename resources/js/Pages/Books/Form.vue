@@ -60,7 +60,11 @@ const form = reactive({
   author_ids: []
 })
 
-const errors = ref({})
+const errors = reactive({
+  title: '',
+  publish_date: '',
+  author_ids: ''
+})
 
 // Fetch existing book if editing
 onMounted(async () => {
@@ -76,9 +80,28 @@ onMounted(async () => {
   }
 })
 
+function validateForm() {
+  errors.title = ''
+  errors.publish_date = ''
+
+  if (!form.title.trim()) {
+    errors.title = 'Title is required'
+  }
+
+  if (!form.publish_date) {
+    errors.publish_date = 'Publish date is required'
+  } else if (new Date(form.publish_date) > new Date()) {
+    errors.publish_date = 'Publish date cannot be in the future'
+  }
+
+  return !errors.title && !errors.publish_date
+}
+
 async function submit() {
   try {
     errors.value = {}
+
+    if (!validateForm()) return
 
     const payload = {
       title: form.title,

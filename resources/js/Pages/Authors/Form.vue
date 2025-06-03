@@ -55,7 +55,11 @@ const form = reactive({
   birth_date: ''
 })
 
-const errors = ref({})
+const errors = reactive({
+  name: '',
+  birth_date: '',
+})
+
 
 // Se for edição, busca dados do autor via API
 onMounted(async () => {
@@ -70,10 +74,27 @@ onMounted(async () => {
   }
 })
 
+function validateForm() {
+  errors.name = ''
+  errors.publish_date = ''
+
+  if (!form.name.trim()) {
+    errors.name = 'Name is required'
+  }
+
+  if (!form.birth_date) {
+    errors.birth_date = 'Birth date is required'
+  } else if (new Date(form.birth_date) > new Date()) {
+    errors.birth_date = 'Birth date cannot be in the future'
+  }
+
+  return !errors.name && !errors.birth_date
+}
+
 async function submit() {
   try {
     errors.value = {}
-
+    if (!validateForm()) return
     const payload = {
       name: form.name,
       birth_date: form.birth_date
