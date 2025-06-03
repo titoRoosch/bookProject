@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Authors;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -13,10 +14,18 @@ function mocks()
     ];
 }
 
+function login()
+{
+    return User::factory()->create();
+}
+
 it('gets all authors', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocks();
 
-    $response = $this->json('get', '/api/author/index');
+    $response = $this->get('/api/author/index');
     $response->assertStatus(200);
 
     $responseData = $response->json();
@@ -24,9 +33,12 @@ it('gets all authors', function () {
 });
 
 it('gets author by id', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocks();
 
-    $response = $this->json('get', '/api/author/show/' . $mock['author'][0]->id);
+    $response = $this->get('/api/author/show/' . $mock['author'][0]->id);
     $response->assertStatus(200);
 
     $responseData = $response->json();
@@ -34,6 +46,9 @@ it('gets author by id', function () {
 });
 
 it('creates an author', function () {
+    $user = login();
+    $this->actingAs($user);
+
     mocks();
 
     $data = [
@@ -41,7 +56,7 @@ it('creates an author', function () {
         'birth_date' => '1995-07-04',
     ];
 
-    $response = $this->json('post', '/api/author/store', $data);
+    $response = $this->post('/api/author/store', $data);
     $response->assertStatus(200);
 
     $responseData = $response->json();
@@ -49,6 +64,9 @@ it('creates an author', function () {
 });
 
 it('updates an author', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocks();
 
     $data = [
@@ -56,7 +74,7 @@ it('updates an author', function () {
         'birth_date' => '1995-07-04',
     ];
 
-    $response = $this->json('put', '/api/author/update/' . $mock['author'][0]->id, $data);
+    $response = $this->put('/api/author/update/' . $mock['author'][0]->id, $data);
     $response->assertStatus(200);
 
     $responseData = $response->json();
@@ -65,8 +83,11 @@ it('updates an author', function () {
 });
 
 it('deletes an author', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocks();
 
-    $response = $this->json('delete', '/api/author/delete/' . $mock['author'][0]->id);
+    $response = $this->delete('/api/author/delete/' . $mock['author'][0]->id);
     $response->assertStatus(200);
 });

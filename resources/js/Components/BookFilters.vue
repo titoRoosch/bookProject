@@ -8,6 +8,7 @@
 import { ref, watchEffect } from 'vue'
 import { useBookStore } from '../stores/bookStore'
 import axios from 'axios'
+axios.defaults.withCredentials = true
 
 const store = useBookStore()
 const search = ref(store.filters.search)

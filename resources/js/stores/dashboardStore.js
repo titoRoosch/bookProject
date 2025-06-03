@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+axios.defaults.withCredentials = true
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({

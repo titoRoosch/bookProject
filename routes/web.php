@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +50,30 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/authors/{author}', fn () => Inertia::render('Authors/Show'))->name('authors.show');
 
     Route::get('/dashboardBooks', fn () => Inertia::render('Dashboard/Index'))->name('dashboard');
+});
+
+
+Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
+    
+    // 📚 Rotas de livros
+    Route::prefix('book')->group(function () {
+        Route::get('index', [BookController::class, 'index']);
+        Route::get('show/{id}', [BookController::class, 'show']);
+        Route::post('store', [BookController::class, 'store']);
+        Route::put('update/{id}', [BookController::class, 'update']);
+        Route::delete('delete/{id}', [BookController::class, 'delete']);
+    });
+
+    // ✍️ Rotas de autores
+    Route::prefix('author')->group(function () {
+        Route::get('index', [AuthorController::class, 'index']);
+        Route::get('show/{id}', [AuthorController::class, 'show']);
+        Route::post('store', [AuthorController::class, 'store']);
+        Route::put('update/{id}', [AuthorController::class, 'update']);
+        Route::delete('delete/{id}', [AuthorController::class, 'delete']);
+    });
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 });
 
 require __DIR__.'/auth.php';

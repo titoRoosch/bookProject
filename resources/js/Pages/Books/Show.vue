@@ -32,6 +32,7 @@ import axios from 'axios'
 import { useRoute } from 'vue-router'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { usePage, router, Link } from '@inertiajs/vue3'
+axios.defaults.withCredentials = true
 
 defineOptions({ layout: AuthenticatedLayout })
 

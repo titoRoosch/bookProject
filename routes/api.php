@@ -21,22 +21,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/message', function () {
     return response()->json(['message' => 'Hello from Laravel!']);
 });
-
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
-
-
-Route::prefix('author')->namespace('App\Http\Controllers')->group(function () {
-    Route::get('index', 'AuthorController@index');
-    Route::get('show/{id}', 'AuthorController@show');
-    Route::post('store', 'AuthorController@store');
-    Route::put('update/{id}', 'AuthorController@update');
-    Route::delete('delete/{id}', 'AuthorController@delete');
-});
-
-Route::prefix('book')->namespace('App\Http\Controllers')->group(function () {
-    Route::get('index', 'BookController@index');
-    Route::get('show/{id}', 'BookController@show');
-    Route::post('store', 'BookController@store');
-    Route::put('update/{id}', 'BookController@update');
-    Route::delete('delete/{id}', 'BookController@delete');
-});

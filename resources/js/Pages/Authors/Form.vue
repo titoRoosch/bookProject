@@ -41,6 +41,7 @@ import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import { router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+axios.defaults.withCredentials = true
 
 defineOptions({ layout: AuthenticatedLayout })
 

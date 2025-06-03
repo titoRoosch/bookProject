@@ -1,85 +1,108 @@
 <?php
 
-use App\Models\Authors;
+use App\Models\User;
 use App\Models\Books;
+use App\Models\Authors;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function mocksBooks() {
-    $author = Authors::factory()->create();
-    $books = Books::factory(3)->create();
-
-    foreach ($books as $book) {
-        $book->authors()->attach($author->id);
-    }
+function mocksBooks()
+{
+    $authors = Authors::factory(2)->create();
+    $books = Books::factory()->count(3)->create()->each(function ($book) use ($authors) {
+        $book->authors()->attach($authors->pluck('id'));
+    });
 
     return [
-        'author' => $author,
         'books' => $books,
+        'authors' => $authors,
     ];
 }
 
-test('it gets all books', function () {
+
+it('gets all books', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocksBooks();
 
-    $response = $this->json('get', '/api/book/index');
+    $response = $this->get('/api/book/index');
     $response->assertStatus(200);
 
-    $responseData = $response->json();
-    expect(count($responseData['data']))->toBe(3);
+    $data = $response->json();
+    expect($data['data'])->toHaveCount(3);
 });
 
-test('it gets book by id', function () {
+it('gets a single book by id', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocksBooks();
 
-    $response = $this->json('get', '/api/book/show/' . $mock['books'][0]->id);
+    $book = $mock['books'][0];
+
+    $response = $this->get('/api/book/show/' . $book->id);
     $response->assertStatus(200);
 
-    $responseData = $response->json();
-    expect($responseData['id'])->toBe($mock['books'][0]->id);
+    $data = $response->json();
+    expect($data['id'])->toBe($book->id);
 });
 
-test('it creates a book', function () {
-    $mock = mocksBooks();
+it('creates a book', function () {
+    $user = login();
+    $this->actingAs($user);
+
+    $authors = Authors::factory(2)->create();
 
     $data = [
-        'title' => 'teste',
-        'publish_date' => '1995-04-08',
+        'title' => 'Novo Livro',
+        'publish_date' => '2024-06-01',
         'authors' => [
-            ['author_id' => $mock['author']->id]
+            ['author_id' => $authors[0]->id],
+            ['author_id' => $authors[1]->id],
         ],
     ];
 
-    $response = $this->json('post', '/api/book/store', $data);
+    $response = $this->post('/api/book/store', $data);
     $response->assertStatus(200);
 
-    $responseData = $response->json();
-    expect($responseData['title'])->toBe('teste');
+    $book = $response->json();
+    expect($book['title'])->toBe('Novo Livro');
 });
 
-test('it updates a book', function () {
+it('updates a book', function () {
+    $user = login();
+    $this->actingAs($user);
+
     $mock = mocksBooks();
+    $book = $mock['books'][0];
 
     $data = [
-        'title' => $mock['books'][0]->title,
-        'publish_date' => '1995-07-04',
+        'title' => 'Livro Atualizado',
+        'publish_date' => '2022-05-10',
         'authors' => [
-            ['author_id' => $mock['author']->id]
+            ['author_id' => $mock['authors'][0]->id]
         ],
     ];
 
-    $response = $this->json('put', '/api/book/update/' . $mock['books'][0]->id, $data);
+    $response = $this->put('/api/book/update/' . $book->id, $data);
     $response->assertStatus(200);
 
-    $responseData = $response->json();
-    expect($responseData['id'])->toBe($mock['books'][0]->id);
-    expect($responseData['publish_date'])->toBe('1995-07-04');
+    $updated = $response->json();
+    expect($updated['title'])->toBe('Livro Atualizado');
+    expect($updated['id'])->toBe($book->id);
 });
 
-test('it deletes a book', function () {
-    $mock = mocksBooks();
+it('deletes a book', function () {
+    $user = login();
+    $this->actingAs($user);
 
-    $response = $this->json('delete', '/api/book/delete/' . $mock['books'][0]->id);
+    $mock = mocksBooks();
+    $book = $mock['books'][0];
+
+    $response = $this->delete('/api/book/delete/' . $book->id);
     $response->assertStatus(200);
+
+    $this->assertDatabaseMissing('books', ['id' => $book->id]);
 });

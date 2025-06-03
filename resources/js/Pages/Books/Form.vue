@@ -44,6 +44,7 @@ import axios from 'axios'
 import { router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import AuthorDropdown from '@/Components/AuthorDropdown.vue'
+axios.defaults.withCredentials = true
 
 defineOptions({ layout: AuthenticatedLayout })
 
